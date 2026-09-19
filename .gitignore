@@ -1,0 +1,38 @@
+# macOS
+.DS_Store
+._*
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local env / secrets
+.env
+.env.*
+*.pem
+*.key
+secrets/
+credentials.json
+
+# Terraform (if labs get built out later)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# Docker volumes (from labs/docker-compose)
+pgdata/
+postgres-data/
+
+# Python / notebooks (in case of ancillary scripts)
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+
+# Logs
+*.log

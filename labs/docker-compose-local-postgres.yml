@@ -1,0 +1,79 @@
+# Local PostgreSQL lab for the 30-day DBA program.
+# Start:   docker compose -f docker-compose-local-postgres.yml up -d
+# Connect: docker exec -it pgdba psql -U postgres
+# Load:    docker exec -i pgdba psql -U postgres -d postgres < sample-schema.sql
+# Stop:    docker compose -f docker-compose-local-postgres.yml down
+# Wipe:    docker compose -f docker-compose-local-postgres.yml down -v
+
+services:
+  pgdba:
+    image: postgres:16
+    container_name: pgdba
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_INITDB_ARGS: "--data-checksums --auth-host=scram-sha-256"
+    volumes:
+      - pgdba_data:/var/lib/postgresql/data
+      - pgdba_wal_archive:/var/lib/postgresql/wal-archive
+    shm_size: 512mb
+    command:
+      - postgres
+      - -c
+      - shared_preload_libraries=pg_stat_statements,auto_explain
+      - -c
+      - pg_stat_statements.track=ALL
+      - -c
+      - auto_explain.log_min_duration=500ms
+      - -c
+      - auto_explain.log_analyze=on
+      - -c
+      - auto_explain.log_buffers=on
+      - -c
+      - log_min_duration_statement=500
+      - -c
+      - log_connections=on
+      - -c
+      - log_disconnections=on
+      - -c
+      - log_lock_waits=on
+      - -c
+      - idle_in_transaction_session_timeout=600000
+      - -c
+      - wal_level=logical
+      - -c
+      - max_wal_senders=10
+      - -c
+      - max_replication_slots=10
+      - -c
+      - hot_standby=on
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Optional: PgBouncer in front of Postgres (used from Day 13 onward).
+  # Uncomment to enable.
+  #
+  # pgbouncer:
+  #   image: edoburu/pgbouncer:latest
+  #   container_name: pgdba-bouncer
+  #   depends_on:
+  #     pgdba:
+  #       condition: service_healthy
+  #   ports:
+  #     - "6432:5432"
+  #   environment:
+  #     DB_HOST: pgdba
+  #     DB_USER: postgres
+  #     DB_PASSWORD: postgres
+  #     POOL_MODE: transaction
+  #     ADMIN_USERS: postgres
+  #     AUTH_TYPE: scram-sha-256
+
+volumes:
+  pgdba_data:
+  pgdba_wal_archive:

@@ -1,0 +1,36 @@
+# Copy to terraform.tfvars and edit before `terraform apply`.
+
+region = "us-east-1"
+name   = "pgdba-lab"
+
+# --- Networking -----------------------------------------------------------
+# Use an existing VPC and two private subnets in different AZs.
+vpc_id     = "vpc-0123456789abcdef0"
+subnet_ids = [
+  "subnet-0aaaaaaaaaaaaaaaa",
+  "subnet-0bbbbbbbbbbbbbbbb",
+]
+
+# One of these must be non-empty so the DB is reachable.
+allowed_cidrs              = ["10.0.0.0/16"] # your VPC CIDR, or a bastion CIDR
+allowed_security_group_ids = []              # or ["sg-0app..."]
+
+# --- Sizing ---------------------------------------------------------------
+instance_class        = "db.t4g.micro"
+allocated_storage     = 20
+max_allocated_storage = 100
+multi_az              = false            # flip to true for HA
+
+# --- Engine & lifecycle ---------------------------------------------------
+engine_version         = "16.3"
+db_name                = "appdb"
+master_username        = "appadmin"
+backup_retention_days  = 7
+deletion_protection    = true
+
+# --- Tags -----------------------------------------------------------------
+tags = {
+  Owner  = "you@example.com"
+  Env    = "sandbox"
+  Course = "postgres-dba-30day"
+}
