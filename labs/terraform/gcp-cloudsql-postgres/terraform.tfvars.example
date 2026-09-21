@@ -1,0 +1,55 @@
+# Copy to terraform.tfvars and edit before `terraform apply`.
+
+project_id = "my-gcp-project"
+region     = "us-central1"
+name       = "pgdba-lab"
+
+# Self-link of the VPC that the Cloud SQL instance will peer with.
+# Example: "projects/my-gcp-project/global/networks/default"
+network_id = "projects/my-gcp-project/global/networks/default"
+
+# Set to false if you already have Cloud SQL private services access
+# configured on this VPC.
+create_private_service_access = true
+
+# --- Engine + sizing -----------------------------------------------------
+database_version = "POSTGRES_16"
+edition          = "ENTERPRISE"           # or "ENTERPRISE_PLUS" for perf tier
+tier             = "db-custom-2-4096"     # 2 vCPU, 4 GiB
+availability_type = "REGIONAL"            # HA. Use "ZONAL" for cheap sandbox.
+disk_type         = "PD_SSD"
+disk_size_gb      = 20
+disk_autoresize   = true
+disk_autoresize_limit_gb = 200
+
+db_name  = "appdb"
+
+# --- Backups & PITR ------------------------------------------------------
+backup_retention_days           = 14
+point_in_time_recovery          = true
+transaction_log_retention_days  = 7
+
+# --- Networking & auth ---------------------------------------------------
+require_ssl        = true
+iam_authentication = true
+
+# Optional: IAM DB users you want provisioned + granted Cloud SQL Instance User.
+iam_members = [
+  # { email = "you@example.com",           type = "user" },
+  # { email = "data-team@example.com",     type = "group" },
+  # { email = "svc-app@my-project.iam.gserviceaccount.com", type = "serviceAccount" },
+]
+
+maintenance_window = {
+  day          = 7       # 7 = Sunday
+  hour         = 4       # UTC
+  update_track = "stable"
+}
+
+deletion_protection = true
+
+labels = {
+  owner  = "you"
+  env    = "sandbox"
+  course = "postgres-dba-30day"
+}

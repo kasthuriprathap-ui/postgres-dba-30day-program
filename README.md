@@ -108,14 +108,11 @@ postgres-dba-30day-program/
 └── labs/
     ├── docker-compose-local-postgres.yml
     ├── sample-schema.sql
-    └── terraform/
-        └── rds-postgres/          ← full Terraform module used on Day 15
-            ├── main.tf
-            ├── variables.tf
-            ├── outputs.tf
-            ├── versions.tf
-            ├── terraform.tfvars.example
-            └── README.md
+    └── terraform/                 ← runnable modules, one per cloud
+        ├── README.md              ← overview + variable parity table
+        ├── rds-postgres/          ← AWS   (Day 15)
+        ├── azure-flex-postgres/   ← Azure (Day 17)
+        └── gcp-cloudsql-postgres/ ← GCP   (Day 19)
 ```
 
 ## Companion references

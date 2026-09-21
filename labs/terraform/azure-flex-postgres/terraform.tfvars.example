@@ -1,0 +1,56 @@
+# Copy to terraform.tfvars and edit before `terraform apply`.
+
+name     = "pgdba-lab"
+location = "eastus"
+
+# Leave resource_group_name = "" to have Terraform create rg-<name>.
+# Otherwise provide an existing RG name in the same subscription.
+resource_group_name = ""
+
+# --- Network -------------------------------------------------------------
+# The default is to create a fresh VNet + delegated subnet + private DNS
+# zone for you. Set create_network = false and provide the *_id vars below
+# to reuse an existing hub-and-spoke network.
+create_network        = true
+vnet_address_space    = ["10.30.0.0/16"]
+subnet_address_prefix = "10.30.1.0/24"
+
+# Only needed when create_network = false:
+# existing_vnet_id               = "/subscriptions/.../virtualNetworks/vnet-hub"
+# existing_delegated_subnet_id   = "/subscriptions/.../subnets/snet-pg"
+# existing_private_dns_zone_id   = "/subscriptions/.../privateDnsZones/privatelink.postgres.database.azure.com"
+
+# --- Sizing --------------------------------------------------------------
+# Use B_Standard_B1ms for the cheapest sandbox (no HA support though).
+# Use GP_Standard_D2ds_v5 for the smallest production-shape server.
+sku_name              = "GP_Standard_D2ds_v5"
+storage_mb            = 32768
+storage_tier          = "P10"
+postgresql_version    = "16"
+
+# --- HA & backups --------------------------------------------------------
+high_availability_mode      = "Disabled"     # or "SameZone" / "ZoneRedundant"
+standby_availability_zone   = "2"
+backup_retention_days       = 14
+geo_redundant_backup        = false
+
+# --- Auth ----------------------------------------------------------------
+admin_username        = "pgadmin"
+password_auth_enabled = true
+azure_ad_auth_enabled = true
+tenant_id             = ""      # required when azure_ad_auth_enabled = true, e.g. "00000000-0000-0000-0000-000000000000"
+
+# --- Extensions & maintenance -------------------------------------------
+enabled_extensions = "PG_STAT_STATEMENTS,PGCRYPTO,PGVECTOR,PG_CRON,PGAUDIT"
+
+maintenance_window = {
+  day_of_week  = 0   # Sunday
+  start_hour   = 4
+  start_minute = 0
+}
+
+tags = {
+  Owner   = "you@example.com"
+  Env     = "sandbox"
+  Course  = "postgres-dba-30day"
+}
