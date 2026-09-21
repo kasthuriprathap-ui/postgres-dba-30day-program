@@ -123,6 +123,10 @@ postgres-dba-30day-program/
 - [`SQL_SERVER_TO_POSTGRES_CHEATSHEET.md`](SQL_SERVER_TO_POSTGRES_CHEATSHEET.md) — the daily translation guide. Keep it open in a split pane.
 - [`CONNECTING.md`](CONNECTING.md) — every connection recipe: `psql`, DBeaver, and cloud-specific patterns (bastion, SSM port forward, Cloud SQL Auth Proxy, Entra ID auth, IAM DB auth). Reach for this whenever the answer to "how do I get in?" is not obvious.
 
+## License
+
+MIT — see [`LICENSE`](LICENSE). Fork it, remix it, teach with it. Attribution appreciated but not required.
+
 ## A quick word before you start
 
 The single biggest trap for SQL Server DBAs learning Postgres is assuming "database" means the same thing. It doesn't. Also: **there is no shared TempDB, no clustered index, no SQL Agent, and no maintenance plans**. What Postgres gives you instead is honest, composable primitives — MVCC, WAL, extensions, roles — that you assemble to fit the workload. Once that clicks, you will find it liberating.
